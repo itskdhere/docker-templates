@@ -30,10 +30,9 @@ services:
       - ./certs:/certs:ro
     command: >
       --tls-port=853
-      --tls-cert=/certs/fullchain.pem
+      --tls-crt=/certs/fullchain.pem
       --tls-key=/certs/privkey.pem
       --upstream=pihole:53
-      --all-servers
       --cache
       --listen=0.0.0.0
 
