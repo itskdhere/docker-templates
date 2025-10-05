@@ -1,0 +1,43 @@
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    restart: unless-stopped
+    networks:
+      - gw_net
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "80:80/tcp"
+      - "443:443/tcp"
+    environment:
+      TZ: "Asia/Kolkata"
+    volumes:
+      - "./pihole/etc-pihole:/etc/pihole"
+      - "./pihole/etc-dnsmasq.d:/etc/dnsmasq.d"
+    cap_add:
+      - SYS_NICE
+
+  dnsproxy:
+    container_name: dnsproxy
+    image: adguard/dnsproxy:latest
+    restart: unless-stopped
+    networks:
+      - gw_net
+    ports:
+      - "853:853/tcp"
+    volumes:
+      - ./certs:/certs:ro
+    command: >
+      --tls-port=853
+      --tls-cert=/certs/fullchain.pem
+      --tls-key=/certs/privkey.pem
+      --upstream=pihole:53
+      --all-servers
+      --cache
+      --listen=0.0.0.0
+
+networks:
+  gw_net:
+    name: gw_net
+    driver: bridge
