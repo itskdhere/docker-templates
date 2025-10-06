@@ -8,8 +8,8 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "80:80/tcp"
-      - "443:443/tcp"
+      - "8080:80/tcp"
+      - "8443:443/tcp"
     environment:
       TZ: "Asia/Kolkata"
     volumes:
@@ -26,15 +26,17 @@ services:
       - gw_net
     ports:
       - "853:853/tcp"
+      - "443:443/tcp"
     volumes:
       - ./certs:/certs:ro
     command: >
+      --listen=0.0.0.0
+      --upstream=pihole:53
+      --https-port=443
       --tls-port=853
       --tls-crt=/certs/fullchain.pem
       --tls-key=/certs/privkey.pem
-      --upstream=pihole:53
       --cache
-      --listen=0.0.0.0
 
 networks:
   gw_net:
