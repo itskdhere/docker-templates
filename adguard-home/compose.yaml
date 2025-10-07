@@ -1,0 +1,35 @@
+services:
+  adguardhome:
+    image: adguard/adguardhome:latest
+    container_name: adguardhome
+    restart: unless-stopped
+    networks:
+      - adguardhome
+    ports:
+      - "53:53/tcp" # DNS
+      - "53:53/udp" # DNS
+      # - "67:67/udp" # DHCP
+      # - "68:68/udp" # DHCP
+      # - "68:68/tcp" # DHCP
+      - "80:80/tcp" # Admin Web UI
+      - "443:443/tcp" # DoH
+      - "443:443/udp" # DoH
+      - "3000:3000/tcp" # Setup Web UI
+      - "853:853/tcp" # DoT
+      - "784:784/udp" # DoQ
+      - "853:853/udp" # DoQ
+      - "8853:8853/udp" # DoQ
+      - "5443:5443/tcp" # DNSCrypt
+      - "5443:5443/udp" # DNSCrypt
+    volumes:
+      - ./workdir:/opt/adguardhome/work
+      - ./confdir:/opt/adguardhome/conf
+      - ./certs:/certs:ro
+    cap_add:
+      - SYS_NICE
+      # - NET_ADMIN
+
+networks:
+  adguardhome:
+    name: adguardhome
+    driver: bridge
